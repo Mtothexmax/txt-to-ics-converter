@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
+  import { base } from '$app/paths';
 
   let dropzone: HTMLElement | null = null;
   let fileInput: HTMLInputElement | null = null;
@@ -93,7 +94,7 @@
         localStorage.setItem('appointments', JSON.stringify((parsed as any).data));
         localStorage.setItem('eventTitle', eventTitle);
         console.log('Parsed and stored', (parsed as any).data, 'eventTitle=', eventTitle);
-        window.location.href = '/review';
+        window.location.href = `${base}/review`;
       });
     }
   });

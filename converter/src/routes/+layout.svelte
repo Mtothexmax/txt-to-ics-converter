@@ -3,9 +3,11 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { base } from '$app/paths';
 	import RainbowTitle from '$lib/RainbowTitle.svelte';
 
 	let { children } = $props();
+
 
 	let themeIcon = $state('dark_mode');
 
@@ -31,7 +33,7 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
-	<link rel="stylesheet" href="/shadcn.css" />
+	<link rel="stylesheet" href="{base}/shadcn.css" />
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 </svelte:head>
 

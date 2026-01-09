@@ -1,3 +1,7 @@
+<script>
+  import { base } from '$app/paths';
+</script>
+
 <section style="max-width:1100px; margin:0 auto; font-family:var(--font-sans);">
   <h2 style="margin-top:0;">Review Your Appointments</h2>
   <div style="display:flex; gap:1rem; align-items:center; margin-bottom:1rem;">
@@ -14,7 +18,7 @@
     </div>
   </div>
 
-  <div id="no-data" style="color:var(--color-muted-foreground); display:none;">No appointments found. Go back to the <a href="/">landing page</a> to add some.</div>
+  <div id="no-data" style="color:var(--color-muted-foreground); display:none;">No appointments found. Go back to the <a href="{base}/">landing page</a> to add some.</div>
 
   <div style="overflow:auto;">
     <table style="width:100%; border-collapse:collapse;">
