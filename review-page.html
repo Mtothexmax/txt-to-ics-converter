@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base target="_self">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Appointments - Text to ICS Converter</title>
+    <meta name="description" content="Review your appointments before downloading the ICS calendar file.">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary-color: #64748b;
+            --background-color: #f8fafc;
+            --surface-color: #ffffff;
+            --border-color: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --success-color: #10b981;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .summary-card {
+            background: var(--surface-color);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .summary-info {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .summary-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .summary-value {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .controls-section {
+            background: var(--surface-color);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .sort-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .sort-label {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .sort-btn {
+            padding: 0.5rem 1rem;
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sort-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .sort-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .download-btn {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .download-btn:hover {
+            background-color: #059669;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .download-btn:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .appointments-table-container {
+            background: var(--surface-color);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+
+        .table-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .appointments-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .appointments-table th {
+            background-color: #f1f5f9;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border-color);
+            position: sticky;
+            top: 0;
+        }
+
+        .appointments-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: top;
+        }
+
+        .appointments-table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .appointments-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .date-cell {
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .time-cell {
+            font-family: "SF Mono", Monaco, "Cascadia Mono", "Segoe UI Mono", monospace;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .preview-cell {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .no-data i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+            opacity: 0.5;
+        }
+
+        .no-data p {
+            margin-bottom: 1.5rem;
+        }
+
+        .retry-btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .retry-btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .bottom-actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .summary-card,
+            .controls-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .summary-info {
+                justify-content: space-between;
+            }
+
+            .sort-controls {
+                flex-wrap: wrap;
+            }
+
+            .appointments-table th,
+            .appointments-table td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.875rem;
+            }
+
+            .date-cell,
+            .time-cell {
+                white-space: normal;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .summary-card,
+            .controls-section {
+                padding: 1rem;
+            }
+
+            .summary-info {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .sort-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .sort-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .appointments-table {
+                font-size: 0.875rem;
+            }
+
+            .appointments-table th,
+            .appointments-table td {
+                padding: 0.5rem 0.25rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Review Your Appointments</h1>
+            <p class="subtitle">Review your appointments before downloading the ICS calendar file.</p>
+        </header>
+
+        <div class="summary-card">
+            <div class="summary-info">
+                <div class="summary-item">
+                    <span class="summary-label">Event Title</span>
+                    <span class="summary-value" id="eventTitle">Appointment</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Total Appointments</span>
+                    <span class="summary-value" id="totalCount">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Date Range</span>
+                    <span class="summary-value" id="dateRange">-</span>
+                </div>
+            </div>
+            <button class="download-btn" id="topDownloadBtn">
+                <i class="fas fa-download"></i>
+                Download ICS File
+            </button>
+        </div>
+
+        <div class="controls-section">
+            <div class="sort-controls">
+                <span class="sort-label">Sort by:</span>
+                <button class="sort-btn active" id="sortAscBtn">
+                    <i class="fas fa-sort-amount-up"></i>
+                    Date Ascending
+                </button>
+                <button class="sort-btn" id="sortDescBtn">
+                    <i class="fas fa-sort-amount-down"></i>
+                    Date Descending
+                </button>
+            </div>
+            <div class="sort-info">
+                <span class="summary-label">Currently sorted:</span>
+                <span class="summary-value" id="currentSort">Date Ascending</span>
+            </div>
+        </div>
+
+        <div class="appointments-table-container">
+            <h2 class="table-title">
+                <i class="far fa-calendar-alt"></i>
+                Appointments List
+            </h2>
+            <div id="tableContent">
+                <!-- Dynamic table content will be inserted here -->
+            </div>
+        </div>
+
+        <div class="bottom-actions">
+            <button class="download-btn" id="bottomDownloadBtn">
+                <i class="fas fa-download"></i>
+                Download ICS File
+            </button>
+        </div>
+
+        <footer>
+            <p>Text to ICS Converter &copy; 2024 | Review and download your calendar events</p>
+        </footer>
+    </div>
+
+    <script>
+        // DOM Elements
+        const eventTitleEl = document.getElementById("eventTitle");
+        const totalCountEl = document.getElementById("totalCount");
+        const dateRangeEl = document.getElementById("dateRange");
+        const topDownloadBtn = document.getElementById("topDownloadBtn");
+        const bottomDownloadBtn = document.getElementById("bottomDownloadBtn");
+        const sortAscBtn = document.getElementById("sortAscBtn");
+        const sortDescBtn = document.getElementById("sortDescBtn");
+        const currentSortEl = document.getElementById("currentSort");
+        const tableContent = document.getElementById("tableContent");
+
+        // State
+        let appointments = [];
+        let currentSort = "asc";
+
+        // Sample data for demonstration (will be overridden by localStorage data)
+        const sampleAppointments = [
+            { "date": "2026-01-10", "startTime": "09:00", "endTime": "10:30" },
+            { "date": "2026-01-11", "startTime": "14:00", "endTime": "15:00" },
+            { "date": "2026-01-12", "startTime": "11:00", "endTime": "12:15" },
+            { "date": "2026-01-13", "startTime": "16:00", "endTime": "17:30" },
+            { "date": "2026-01-14", "startTime": "10:00", "endTime": "11:45" }
+        ];
+
+        // Format date for display
+        function formatDate(dateStr) {
+            const [year, month, day] = dateStr.split("-");
+            const date = new Date(year, month - 1, day);
+            return date.toLocaleDateString("en-US", {
+                "weekday": "long",
+                "year": "numeric",
+                "month": "long",
+                "day": "numeric"
+            });
+        }
+
+        // Format time for display
+        function formatTime(timeStr) {
+            const [hours, minutes] = timeStr.split(":");
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? "PM" : "AM";
+            const displayHour = hour % 12 || 12;
+            return `${displayHour}:${minutes} ${ampm}`;
+        }
+
+        // Generate preview text
+        function generatePreview(dateStr, startTime, endTime) {
+            const formattedDate = formatDate(dateStr);
+            const formattedStart = formatTime(startTime);
+            const formattedEnd = formatTime(endTime);
+            return `Appointment on ${formattedDate} from ${formattedStart} to ${formattedEnd}`;
+        }
+
+        // Calculate date range
+        function calculateDateRange(appointments) {
+            if (appointments.length === 0) return "-";
+            
+            const dates = appointments.map(a => new Date(a.date));
+            const minDate = new Date(Math.min(...dates));
+            const maxDate = new Date(Math.max(...dates));
+            
+            const formatOptions = { "month": "short", "day": "numeric", "year": "numeric" };
+            const minStr = minDate.toLocaleDateString("en-US", formatOptions);
+            const maxStr = maxDate.toLocaleDateString("en-US", formatOptions);
+            
+            return minDate.getTime() === maxDate.getTime() ? minStr : `${minStr} - ${maxStr}`;
+        }
+
+        // Sort appointments
+        function sortAppointments(appointments, order) {
+            return [...appointments].sort((a, b) => {
+                const dateA = new Date(a.date + "T" + a.startTime);
+                const dateB = new Date(b.date + "T" + b.startTime);
+                return order === "asc" ? dateA - dateB : dateB - dateA;
+            });
+        }
+
+        // Render table
+        function renderTable() {
+            if (appointments.length === 0) {
+                tableContent.innerHTML = `
+                    <div class="no-data">
+                        <i class="far fa-calendar-times"></i>
+                        <p>No appointments found. Please go back and add some appointments.</p>
+                        <a href="index.html" class="retry-btn">
+                            <i class="fas fa-arrow-left"></i>
+                            Go Back
+                        </a>
+                    </div>
+                `;
+                topDownloadBtn.disabled = true;
+                bottomDownloadBtn.disabled = true;
+                return;
+            }
+
+            const sortedAppointments = sortAppointments(appointments, currentSort);
+            
+            let tableHTML = `
+                <table class="appointments-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Preview</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            sortedAppointments.forEach((appointment, index) => {
+                const preview = generatePreview(appointment.date, appointment.startTime, appointment.endTime);
+                tableHTML += `
+                    <tr>
+                        <td class="date-cell">${formatDate(appointment.date)}</td>
+                        <td class="time-cell">${formatTime(appointment.startTime)}</td>
+                        <td class="time-cell">${formatTime(appointment.endTime)}</td>
+                        <td class="preview-cell">${preview}</td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+
+            tableContent.innerHTML = tableHTML;
+            topDownloadBtn.disabled = false;
+            bottomDownloadBtn.disabled = false;
+        }
+
+        // Update summary
+        function updateSummary() {
+            totalCountEl.textContent = appointments.length;
+            dateRangeEl.textContent = calculateDateRange(appointments);
+        }
+
+        // Load data from localStorage
+        function loadData() {
+            try {
+                const savedData = localStorage.getItem("appointmentsData");
+                if (savedData) {
+                    const parsedData = JSON.parse(savedData);
+                    if (Array.isArray(parsedData) && parsedData.length > 0) {
+                        appointments = parsedData;
+                    } else {
+                        appointments = sampleAppointments;
+                    }
+                } else {
+                    appointments = sampleAppointments;
+                }
+            } catch (error) {
+                console.error("Error loading data:", error);
+                appointments = sampleAppointments;
+            }
+            
+            updateSummary();
+            renderTable();
+        }
+
+        // Generate ICS file
+        function generateICS() {
+            const sortedAppointments = sortAppointments(appointments, currentSort);
+            let icsContent = "BEGIN:VCALENDAR\r\n";
+            icsContent += "VERSION:2.0\r\n";
+            icsContent += "PRODID:-//Text to ICS Converter//EN\r\n";
+            icsContent += "CALSCALE:GREGORIAN\r\n";
+            icsContent += "METHOD:PUBLISH\r\n";
+
+            sortedAppointments.forEach((appointment, index) => {
+                const startDateTime = appointment.date.replace(/-/g, "") + "T" + appointment.startTime.replace(/:/g, "") + "00";
+                const endDateTime = appointment.date.replace(/-/g, "") + "T" + appointment.endTime.replace(/:/g, "") + "00";
+                
+                icsContent += "BEGIN:VEVENT\r\n";
+                icsContent += `UID:${Date.now()}-${index}@texttoics.com\r\n`;
+                icsContent += `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").split(".")[0]}Z\r\n`;
+                icsContent += `DTSTART:${startDateTime}\r\n`;
+                icsContent += `DTEND:${endDateTime}\r\n`;
+                icsContent += `SUMMARY:Appointment\r\n`;
+                icsContent += `DESCRIPTION:Generated by Text to ICS Converter\r\n`;
+                icsContent += "END:VEVENT\r\n";
+            });
+
+            icsContent += "END:VCALENDAR\r\n";
+            return icsContent;
+        }
+
+        // Download ICS file
+        function downloadICS() {
+            const icsContent = generateICS();
+            const blob = new Blob([icsContent], { "type": "text/calendar;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `appointments-${new Date().toISOString().split("T")[0]}.ics`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Event Listeners
+        sortAscBtn.addEventListener("click", () => {
+            if (currentSort !== "asc") {
+                currentSort = "asc";
+                sortAscBtn.classList.add("active");
+                sortDescBtn.classList.remove("active");
+                currentSortEl.textContent = "Date Ascending";
+                renderTable();
+            }
+        });
+
+        sortDescBtn.addEventListener("click", () => {
+            if (currentSort !== "desc") {
+                currentSort = "desc";
+                sortDescBtn.classList.add("active");
+                sortAscBtn.classList.remove("active");
+                currentSortEl.textContent = "Date Descending";
+                renderTable();
+            }
+        });
+
+        topDownloadBtn.addEventListener("click", downloadICS);
+        bottomDownloadBtn.addEventListener("click", downloadICS);
+
+        // Initialize
+        loadData();
+    </script>
+</body>
+</html>
