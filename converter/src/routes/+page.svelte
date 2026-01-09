@@ -8,6 +8,7 @@
   let textarea: HTMLTextAreaElement | null = null;
   let convertBtn: HTMLElement | null = null;
   let errorDiv: HTMLElement | null = null;
+  let copyPromptBtn: HTMLElement | null = null;
   // Title applied to all generated events
   let eventTitle: string = 'Appointment';
 
@@ -74,6 +75,13 @@
       });
     }
 
+    if (copyPromptBtn) {
+      addListener(copyPromptBtn, 'click', () => {
+        const prompt = "Please read in all the dates from this and return without any additional characters in this format YYYY-MM-DD HH:MM-HH:MM (e.g., 2026-01-10 09:00-10:30) separated by new lines in a code block.";
+        navigator.clipboard.writeText(prompt);
+      });
+    }
+
     if (convertBtn) {
       addListener(convertBtn, 'click', () => {
         console.log('Convert clicked');
@@ -106,6 +114,11 @@
 
 <section style="max-width:900px; margin:0 auto; font-family:var(--font-sans);">
   <p style="color:var(--color-muted-foreground);">Drop a plain text file (one appointment per line) or paste text using the textarea. Expected format per line: <code>YYYY-MM-DD HH:MM-HH:MM</code> (e.g., <code>2026-01-10 09:00-10:30</code>).</p>
+
+  <button bind:this={copyPromptBtn} class="copy-prompt-btn" aria-label="Copy LLM Prompt">
+    <span class="material-icons" style="font-size: 1.1rem;" aria-hidden="true">content_copy</span>
+    Copy LLM Prompt
+  </button>
 
   <div bind:this={dropzone} id="dropzone" class="dropzone-centered" role="region" aria-label="File dropzone">
     <div class="dropzone-inner">
@@ -179,6 +192,23 @@
   }
 
   .dropzone-btn:focus { box-shadow: 0 0 0 3px rgba(0,180,255,0.12); outline: none; }
+
+  .copy-prompt-btn {
+    margin-bottom: 1rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    background: var(--color-secondary);
+    color: var(--color-secondary-foreground);
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .copy-prompt-btn:hover {
+    opacity: 0.9;
+  }
 
   @media (min-width: 640px) {
     .dropzone-title { font-size: 1.25rem; }
