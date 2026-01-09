@@ -35,11 +35,12 @@
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 </svelte:head>
 
-<header style="background:var(--color-card); color:var(--color-card-foreground); padding:1rem; display:flex; align-items:center; justify-content:space-between; gap:1rem;">
-	<div style="display:flex; align-items:center; gap:1rem;">
+<header style="background:var(--color-card); color:var(--color-card-foreground); padding:1rem; display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:1rem;">
+	<div></div>
+	<div style="display:flex; align-items:center; justify-content:center;">
 		<RainbowTitle tag="h1" tabindex="0" role="link" on:click={goHome} on:keydown={e => ((e.key === 'Enter' || e.key === ' ') ? goHome() : null)}  style="cursor:pointer; font-size:1rem">Text to ICS Converter</RainbowTitle>
 	</div>
-	<div>
+	<div style="display:flex; justify-content:flex-end;">
 		<button onclick={toggleTheme} style="padding:.35rem .5rem; border-radius:6px; background:var(--color-primary); color:var(--color-primary-foreground); border:none; cursor:pointer; display:flex; align-items:center; gap:.5rem;" aria-label="Toggle theme"><span class="material-icons" aria-hidden>{themeIcon}</span></button>
 	</div> 
 </header>
