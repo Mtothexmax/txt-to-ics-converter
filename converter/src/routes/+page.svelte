@@ -1,4 +1,5 @@
 <script lang="ts">
+  import RainbowTitle from '$lib/RainbowTitle.svelte';
   import { onMount, onDestroy } from 'svelte';
 
   let dropzone: HTMLElement | null = null;
@@ -101,7 +102,7 @@
 </script>
 
 <section style="max-width:900px; margin:0 auto; font-family:var(--font-sans);">
-  <h2 style="margin-top:0;">Text to ICS Converter</h2>
+  <RainbowTitle tag="h2">Text to ICS Converter</RainbowTitle>
   <p style="color:var(--color-muted-foreground);">Drop a plain text file (one appointment per line) or paste text using the textarea. Expected format per line: <code>YYYY-MM-DD HH:MM-HH:MM</code> (e.g., <code>2026-01-10 09:00-10:30</code>).</p>
 
   <div bind:this={dropzone} id="dropzone" style="border:2px dashed var(--color-border); padding:1rem; border-radius:8px; margin-bottom:1rem; background:var(--color-popover); color:var(--color-popover-foreground);">
