@@ -10,7 +10,7 @@
     </div>
 
     <div style="margin-left:auto;">
-      <button id="download-top" style="padding:.5rem .75rem; border-radius:6px; background:var(--color-primary); color:var(--color-primary-foreground); border:none; cursor:pointer; display:flex; gap:.5rem; align-items:center;" aria-label="Download ICS"><span class="material-icons" aria-hidden>download</span>Download ICS File</button>
+      <button id="download-top" style="padding:.5rem .75rem; border-radius:6px; background:var(--color-primary); color:var(--color-primary-foreground); border:none; cursor:pointer; display:flex; gap:.5rem; align-items:center;" aria-label="Download ICS"><span class="material-icons" aria-hidden="true">download</span>Download ICS File</button>
     </div>
   </div>
 
@@ -31,7 +31,7 @@
   </div>
 
   <div style="margin-top:1rem;">
-    <button id="download-bottom" style="padding:.5rem .75rem; border-radius:6px; background:var(--color-primary); color:var(--color-primary-foreground); border:none; cursor:pointer; display:flex; gap:.5rem; align-items:center;" aria-label="Download ICS"><span class="material-icons" aria-hidden>download</span>Download ICS File</button>
+    <button id="download-bottom" style="padding:.5rem .75rem; border-radius:6px; background:var(--color-primary); color:var(--color-primary-foreground); border:none; cursor:pointer; display:flex; gap:.5rem; align-items:center;" aria-label="Download ICS"><span class="material-icons" aria-hidden="true">download</span>Download ICS File</button>
   </div>
 
   <script>

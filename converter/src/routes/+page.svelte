@@ -108,7 +108,7 @@
 
   <div bind:this={dropzone} id="dropzone" class="dropzone-centered" role="region" aria-label="File dropzone">
     <div class="dropzone-inner">
-      <div class="upload-logo" aria-hidden>
+      <div class="upload-logo" aria-hidden="true">
         <span class="material-icons" aria-hidden="true">cloud_upload</span>
       </div>
 
@@ -131,7 +131,7 @@
   </div>
 
   <div style="display:flex; flex-direction:column; gap:.5rem; margin-top:.75rem; width:100%;">
-    <button bind:this={convertBtn} id="convert-btn" style="width:100%; padding:.75rem; border-radius:6px; background:var(--color-primary); color:var(--color-primary-foreground); border:none; cursor:pointer; display:flex; justify-content:center; gap:.5rem; align-items:center;" aria-label="Convert"><span class="material-icons" aria-hidden>play_arrow</span>Convert</button>
+    <button bind:this={convertBtn} id="convert-btn" style="width:100%; padding:.75rem; border-radius:6px; background:var(--color-primary); color:var(--color-primary-foreground); border:none; cursor:pointer; display:flex; justify-content:center; gap:.5rem; align-items:center;" aria-label="Convert"><span class="material-icons" aria-hidden="true">play_arrow</span>Convert</button>
     <div bind:this={errorDiv} id="error" style="color:var(--color-destructive-foreground);"></div>
   </div>
 </section>

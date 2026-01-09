@@ -7,7 +7,7 @@
 
 	let { children } = $props();
 
-	let themeIcon = 'dark_mode';
+	let themeIcon = $state('dark_mode');
 
 	onMount(() => {
 		const theme = localStorage.getItem('theme');
@@ -41,7 +41,7 @@
 		<RainbowTitle tag="h1" tabindex="0" role="link" on:click={goHome} on:keydown={e => ((e.key === 'Enter' || e.key === ' ') ? goHome() : null)}  style="cursor:pointer; font-size:1rem">Text to ICS Converter</RainbowTitle>
 	</div>
 	<div style="display:flex; justify-content:flex-end;">
-		<button onclick={toggleTheme} style="padding:.35rem .5rem; border-radius:6px; background:var(--color-primary); color:var(--color-primary-foreground); border:none; cursor:pointer; display:flex; align-items:center; gap:.5rem;" aria-label="Toggle theme"><span class="material-icons" aria-hidden>{themeIcon}</span></button>
+		<button onclick={toggleTheme} style="padding:.35rem .5rem; border-radius:6px; background:var(--color-primary); color:var(--color-primary-foreground); border:none; cursor:pointer; display:flex; align-items:center; gap:.5rem;" aria-label="Toggle theme"><span class="material-icons" aria-hidden="true">{themeIcon}</span></button>
 	</div> 
 </header>
 
