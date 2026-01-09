@@ -3,6 +3,7 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import RainbowTitle from '$lib/RainbowTitle.svelte';
 
 	let { children } = $props();
 
@@ -36,7 +37,7 @@
 
 <header style="background:var(--color-card); color:var(--color-card-foreground); padding:1rem; display:flex; align-items:center; justify-content:space-between; gap:1rem;">
 	<div style="display:flex; align-items:center; gap:1rem;">
-		<h1 tabindex="0" role="link" onclick={goHome} onkeydown={e => ((e.key === 'Enter' || e.key === ' ') ? goHome() : null)} style="margin:0; font-family:var(--font-sans); cursor:pointer;">Text to ICS Converter</h1>
+		<RainbowTitle tag="h1" tabindex="0" role="link" on:click={goHome} on:keydown={e => ((e.key === 'Enter' || e.key === ' ') ? goHome() : null)}  style="cursor:pointer; font-size:1rem">Text to ICS Converter</RainbowTitle>
 	</div>
 	<div>
 		<button onclick={toggleTheme} style="padding:.35rem .5rem; border-radius:6px; background:var(--color-primary); color:var(--color-primary-foreground); border:none; cursor:pointer; display:flex; align-items:center; gap:.5rem;" aria-label="Toggle theme"><span class="material-icons" aria-hidden>{themeIcon}</span></button>
